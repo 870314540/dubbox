@@ -21,6 +21,7 @@ import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.monitor.MonitorService;
 
 /**
+ * 统计信息
  * Statistics. (SPI, Prototype, ThreadSafe)
  * 
  * @author william.liangf
@@ -47,6 +48,7 @@ public class Statistics implements Serializable {
 
     public Statistics(URL url) {
         this.url = url;
+        //通过url获取信息
         this.application = url.getParameter(MonitorService.APPLICATION);
         this.service = url.getParameter(MonitorService.INTERFACE);
         this.method = url.getParameter(MonitorService.METHOD);
@@ -125,6 +127,7 @@ public class Statistics implements Serializable {
         return this;
     }
 
+    //重写hashCode
     @Override
     public int hashCode() {
         final int prime = 31;

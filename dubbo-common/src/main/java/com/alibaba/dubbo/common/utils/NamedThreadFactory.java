@@ -20,12 +20,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * InternalThreadFactory.
+ * 根据名字创建线程工厂类
  * 
  * @author qian.lei
  */
 
 public class NamedThreadFactory implements ThreadFactory
 {
+	//序列号
 	private static final AtomicInteger POOL_SEQ = new AtomicInteger(1);
 
 	private final AtomicInteger mThreadNum = new AtomicInteger(1);

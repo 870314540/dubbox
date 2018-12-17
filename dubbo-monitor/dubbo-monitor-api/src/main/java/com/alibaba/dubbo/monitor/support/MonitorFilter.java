@@ -57,10 +57,11 @@ public class MonitorFilter implements Filter {
     
     // 调用过程拦截
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+        //url参数中是否含有monitor 关键字
         if (invoker.getUrl().hasParameter(Constants.MONITOR_KEY)) {
             RpcContext context = RpcContext.getContext(); // 提供方必须在invoke()之前获取context信息
             long start = System.currentTimeMillis(); // 记录起始时间戮
-            getConcurrent(invoker, invocation).incrementAndGet(); // 并发计数
+            getConcurrent(invoker, invocation).incrementAndGet(); // 并发计数 +1
             try {
                 Result result = invoker.invoke(invocation); // 让调用链往下执行
                 collect(invoker, invocation, result, context, start, false);
@@ -69,7 +70,7 @@ public class MonitorFilter implements Filter {
                 collect(invoker, invocation, null, context, start, true);
                 throw e;
             } finally {
-                getConcurrent(invoker, invocation).decrementAndGet(); // 并发计数
+                getConcurrent(invoker, invocation).decrementAndGet(); // 并发计数-1
             }
         } else {
             return invoker.invoke(invocation);

@@ -61,7 +61,9 @@ public class DubboMonitor implements Monitor {
     public DubboMonitor(Invoker<MonitorService> monitorInvoker, MonitorService monitorService) {
         this.monitorInvoker = monitorInvoker;
         this.monitorService = monitorService;
+
         this.monitorInterval = monitorInvoker.getUrl().getPositiveParameter("interval", 60000);
+        //收集信息是定时的发送，而不是一收集到就发送
         // 启动统计信息收集定时器
         sendFuture = scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
@@ -80,9 +82,11 @@ public class DubboMonitor implements Monitor {
             logger.info("Send statistics to monitor " + getUrl());
         }
         String timestamp = String.valueOf(System.currentTimeMillis());
+
         for (Map.Entry<Statistics, AtomicReference<long[]>> entry : statisticsMap.entrySet()) {
             // 获取已统计数据
             Statistics statistics = entry.getKey();
+            //对象的原子引用
             AtomicReference<long[]> reference = entry.getValue();
             long[] numbers = reference.get();
             long success = numbers[0];

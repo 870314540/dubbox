@@ -58,18 +58,19 @@ import com.alibaba.dubbo.monitor.MonitorService;
 
 /**
  * SimpleMonitorService
- * 
+ * SimpleMonitorService可以理解为一个服务提供者
  * @author william.liangf
  */
 public class SimpleMonitorService implements MonitorService {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleMonitorService.class);
 
+
     private static final String[] types = {SUCCESS, FAILURE, ELAPSED, CONCURRENT, MAX_ELAPSED, MAX_CONCURRENT};
     
     private static final String POISON_PROTOCOL = "poison";
     
-    // 定时任务执行器
+    // 定时任务执行器：daemon线程
     private final ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1, new NamedThreadFactory("DubboMonitorTimer", true));
 
     // 图表绘制定时器
@@ -115,6 +116,7 @@ public class SimpleMonitorService implements MonitorService {
         queue = new LinkedBlockingQueue<URL>(Integer.parseInt(ConfigUtils.getProperty("dubbo.monitor.queue", "100000")));
         writeThread = new Thread(new Runnable() {
             public void run() {
+                //死循环running=true
                 while (running) {
                     try {
                         write(); // 记录统计日志
@@ -131,6 +133,7 @@ public class SimpleMonitorService implements MonitorService {
         writeThread.setDaemon(true);
         writeThread.setName("DubboMonitorAsyncWriteLogThread");
         writeThread.start();
+        //scheduleWithFixedDelay 比如当前一个任务结束的时刻，开始结算间隔时间，如0秒开始执行第一次任务，任务耗时5秒，任务间隔时间3秒，那么第二次任务执行的时间是在第8秒开始。
         chartFuture = scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
                 try {
@@ -158,7 +161,9 @@ public class SimpleMonitorService implements MonitorService {
     }
     
     private void write() throws Exception {
+        //出队
         URL statistics = queue.take();
+        //不写
         if (POISON_PROTOCOL.equals(statistics.getProtocol())) {
             return;
         }
@@ -173,6 +178,7 @@ public class SimpleMonitorService implements MonitorService {
         }
         String day = new SimpleDateFormat("yyyyMMdd").format(now);
         SimpleDateFormat format = new SimpleDateFormat("HHmm");
+        //key 文件类型
         for (String key : types) {
             try {
                 String type;
@@ -420,13 +426,15 @@ public class SimpleMonitorService implements MonitorService {
         collect(statistics);
     }
 
+    //colect 信息放到队列中
     public void collect(URL statistics) {
+        //offer: 将指定元素插入此队列中（如果立即可行且不会违反容量限制），成功时返回 true，如果当前没有可用的空间，则返回 false，不会抛异常：
         queue.offer(statistics);
         if (logger.isInfoEnabled()) {
             logger.info("collect statistics: " + statistics);
         }
     }
-
+    //没实现
 	public List<URL> lookup(URL query) {
 		// TODO Auto-generated method stub
 		return null;

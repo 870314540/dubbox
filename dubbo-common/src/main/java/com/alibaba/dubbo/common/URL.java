@@ -401,7 +401,9 @@ public final class URL implements Serializable {
 
     public String getParameter(String key) {
         String value = parameters.get(key);
+        //如果上面没有获取到
         if (value == null || value.length() == 0) {
+            //获取默认的key
             value = parameters.get(Constants.DEFAULT_KEY_PREFIX + key);
         }
         return value;
