@@ -100,7 +100,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
     public void setBeanName(String name) {
         this.beanName = name;
     }
-
+    //Spring容器初始化完成，调用
     public void onApplicationEvent(ApplicationEvent event) {
         if (ContextRefreshedEvent.class.getName().equals(event.getClass().getName())) {
         	if (isDelay() && ! isExported() && ! isUnexported()) {
@@ -111,7 +111,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
             }
         }
     }
-    
+    //是否延迟加载
     private boolean isDelay() {
         Integer delay = getDelay();
         ProviderConfig provider = getProvider();
@@ -120,7 +120,7 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
         }
         return supportedApplicationListener && (delay == null || delay.intValue() == -1);
     }
-
+    //当bean初始化完成调用
     @SuppressWarnings({ "unchecked", "deprecation" })
 	public void afterPropertiesSet() throws Exception {
         if (getProvider() == null) {

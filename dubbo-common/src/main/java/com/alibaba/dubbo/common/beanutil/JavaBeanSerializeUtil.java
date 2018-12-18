@@ -31,6 +31,7 @@ import com.alibaba.dubbo.common.utils.LogHelper;
 import com.alibaba.dubbo.common.utils.ReflectUtils;
 
 /**
+ * Javabean 序列化 工具类
  * @author <a href="mailto:gang.lvg@taobao.com">kimi</a>
  */
 public final class JavaBeanSerializeUtil {

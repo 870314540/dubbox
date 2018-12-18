@@ -56,7 +56,9 @@ import com.alibaba.dubbo.rpc.Protocol;
 
 /**
  * AbstractBeanDefinitionParser
- * 
+ *
+ * DubboBeanDefinitionParser是用来解析自定义属性的，它需要实现BeanDefinitionParser接口
+ *
  * @author william.liangf
  * @export
  */
@@ -83,6 +85,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         beanDefinition.setBeanClass(beanClass);
         beanDefinition.setLazyInit(false);
         String id = element.getAttribute("id");
+        //id为空,构造id
         if ((id == null || id.length() == 0) && required) {
         	String generatedBeanName = element.getAttribute("name");
         	if (generatedBeanName == null || generatedBeanName.length() == 0) {

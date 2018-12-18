@@ -50,9 +50,11 @@ public class GenericImplFilter implements Filter {
 
     private static final Class<?>[] GENERIC_PARAMETER_TYPES = new Class<?>[]{String.class, String[].class, Object[].class};
 
-    //泛化实现
+
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         String generic = invoker.getUrl().getParameter(Constants.GENERIC_KEY);
+        //因为服务端实现为泛化实现，所有的服务提供者实现GenericeServer#$invoker方法，其实现方式就是将Bean转换成Map
+        //泛化实现
         if (ProtocolUtils.isGeneric(generic)
                 && !Constants.$INVOKE.equals(invocation.getMethodName())
                 && invocation instanceof RpcInvocation) {
@@ -146,7 +148,7 @@ public class GenericImplFilter implements Filter {
             }
             return result;
         }
-
+        //泛化引用
         if (invocation.getMethodName().equals(Constants.$INVOKE)
                 && invocation.getArguments() != null
                 && invocation.getArguments().length == 3
